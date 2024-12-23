@@ -1,19 +1,23 @@
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { useAuth } from "./authContext";
 import React, { useEffect, useState } from "react";
-import { Link } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 
 
 
 
-export default function Friends() {
+export default function GroupDetail() {
 
-    const [friends, setFriends] = useState([]);
+    const [group, setGroup] = useState({});
+    const [groupName, setGroupName] = useState("");
+    const [userNames, setUserNames] = useState([]);
+
+    const groupId = useLocalSearchParams().groupId;
     const { authJWT } = useAuth();
 
 
     const requestOptions = {
-        method: "POST",
+        method: "GET",
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -23,29 +27,30 @@ export default function Friends() {
       }
 
     useEffect(() => {
-        fetch("http://localhost:8080/friends", requestOptions)
+        fetch("http://localhost:8080/groups/"+groupId+"/getGroupDetails", requestOptions)
         .then(response => response.json())
-        .then(data => setFriends(data.friendList))
+        .then(data => afterResponse(data))
         .catch(error => console.log(error));
     }, []);
+
+    function afterResponse(groupDetail:any){
+        //groupDetail.GroupName,groupMessages,userNames
+        setGroup(groupDetail);
+        setGroupName(groupDetail.GroupName);
+        setUserNames(groupDetail.userNames);
+
+    }
     
     return (
         <View style={myStyle.container}>
-            <Text style={{fontSize: 15,padding: 10}}> id - username - select friend to chat </Text>
-            {
-                
-                friends.map((friend, index) => {
-                    return(
-                        <View key={index} style={{flexDirection: 'row'}}>
+            <Text style={{fontSize: 15,padding: 10}}> group details </Text>
+            <Text> group name - all user names - group messages</Text>
+            <Text></Text>
 
-                            <Text style={{fontSize: 15,textAlign: 'center'}}> {friend.id} -  {friend.username}  - {friend.groups} </Text>
-                            <Link href={{pathname:"./chatFriend",params:{frid:friend.id}}}>Chat with friend</Link>
-                        </View>
-                    
-                )
-                })
-                  
+            {                
+                <Text> {groupName} - {userNames} - creatin time will be implemented </Text>
             }
+            <Link href={{ pathname: "./groupMessaging", params:{groupId:groupId} }} > chat with group </Link>
         </View>
     );
 }

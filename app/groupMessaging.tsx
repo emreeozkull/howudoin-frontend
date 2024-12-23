@@ -1,70 +1,87 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
-import { useAuth } from "./authContext";
-import React, { useEffect, useState } from "react";
-import { Link } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
+import {useEffect, useState} from "react"; 
+import {View, TextInput, Button, Text} from "react-native"; 
+import {useAuth} from "./authContext";
 
 
+export default function GroupMessaging(){
 
-
-export default function Friends() {
-
-    const [friends, setFriends] = useState([]);
+    const params = useLocalSearchParams();
+    const groupId = params.groupId
     const { authJWT } = useAuth();
 
-
-    const requestOptions = {
-        method: "POST",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer '+ authJWT
-        }
-    
-      }
+    const [groupMessages, setGroupMessages] = useState([]);
+    const [groupName, setGroupName] = useState("");
+    const [sendMessage, setSendMessage] = useState("");
 
     useEffect(() => {
-        fetch("http://localhost:8080/friends", requestOptions)
-        .then(response => response.json())
-        .then(data => setFriends(data.friendList))
-        .catch(error => console.log(error));
-    }, []);
-    
-    return (
-        <View style={myStyle.container}>
-            <Text style={{fontSize: 15,padding: 10}}> id - username - select friend to chat </Text>
-            {
-                
-                friends.map((friend, index) => {
-                    return(
-                        <View key={index} style={{flexDirection: 'row'}}>
+            fetch("http://localhost:8080/groups/" + groupId + "/messages", {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": "Bearer " + authJWT 
+                }
+            })
+            .then(response => response.json())
+            .then(data => setGroupMessages(data))
+        }
+    ) 
 
-                            <Text style={{fontSize: 15,textAlign: 'center'}}> {friend.id} -  {friend.username}  - {friend.groups} </Text>
-                            <Link href={{pathname:"./chatFriend",params:{frid:friend.id}}}>Chat with friend</Link>
-                        </View>
-                    
-                )
+    function sendMessageToServer(){
+        console.log("inside send message to server and message: ", sendMessage) // for debug
+        fetch("http://localhost:8080/groups/" + groupId + "/send", {
+                method:"POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": "Bearer " + authJWT 
+                },
+                body: JSON.stringify( {
+                    sender: "U5", 
+                    message: sendMessage
                 })
-                  
+            })
+        .then(response => response.text())
+        .then(response => console.log(response))
+        .catch(error => console.log(error))
+    }
+
+
+    return (
+
+        <View> 
+
+            {
+                groupMessages.map((groupMessage, index) => {
+                   return (<View key={index} style={{padding:15}}>
+                        <Text> {groupMessage.message}   -from {groupMessage.sender} </Text>
+                   </View>
+                   )
+                })
             }
+
+            <View style= {{marginTop:150}}>
+                <TextInput onChangeText={setSendMessage} style={{
+                    backgroundColor: "#e5e5e5",
+                    padding: 10,
+                    margin: 10,
+                    marginTop: 100,
+                    marginLeft: 80,
+                    borderRadius: 40,
+                    width: 250,
+                    alignContent: "center",
+                    alignItems: "center"
+                }}>  
+                </TextInput>
+
+                <Button title="send" onPress={sendMessageToServer}> </Button>
+
+            </View>
+            
         </View>
+         
+
     );
+
+
+
 }
-
-
-const myStyle = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-});
-

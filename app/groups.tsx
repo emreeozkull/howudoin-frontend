@@ -6,14 +6,14 @@ import { Link } from "expo-router";
 
 
 
-export default function Friends() {
+export default function Groups() {
 
-    const [friends, setFriends] = useState([]);
+    const [groups, setGroups] = useState([]);
     const { authJWT } = useAuth();
 
 
     const requestOptions = {
-        method: "POST",
+        method: "GET",
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -23,26 +23,26 @@ export default function Friends() {
       }
 
     useEffect(() => {
-        fetch("http://localhost:8080/friends", requestOptions)
+        fetch("http://localhost:8080/groups", requestOptions)
         .then(response => response.json())
-        .then(data => setFriends(data.friendList))
+        .then(data => setGroups(data))
         .catch(error => console.log(error));
     }, []);
     
     return (
         <View style={myStyle.container}>
-            <Text style={{fontSize: 15,padding: 10}}> id - username - select friend to chat </Text>
+            <Text style={{fontSize: 15,padding: 10, margin:20}}> group name - group details - chat with group </Text>
             {
                 
-                friends.map((friend, index) => {
+                groups.map((group:any, index) => {
                     return(
-                        <View key={index} style={{flexDirection: 'row'}}>
+                        <View key={index} style={{flexDirection: 'row', margin:5,}}>
 
-                            <Text style={{fontSize: 15,textAlign: 'center'}}> {friend.id} -  {friend.username}  - {friend.groups} </Text>
-                            <Link href={{pathname:"./chatFriend",params:{frid:friend.id}}}>Chat with friend</Link>
+                            <Text style={{fontSize: 15,textAlign: 'center'}}> {group.GroupName}   </Text>
+                            <Link href={{pathname: "./groupDetail", params: {groupId: group.id} }}> Group details </Link>
+                            <Link href={{pathname:"./groupMessaging", params: {groupId: group.id} }}> chat </Link>
                         </View>
-                    
-                )
+                    )
                 })
                   
             }

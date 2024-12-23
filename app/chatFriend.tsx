@@ -64,9 +64,9 @@ export default function ChatFriend() {
 
     function getMessageText(message, friendID) {
         if (message.senderId === friendID) {
-          return `${message.messages} friend`;
+          return `${message.messages} -friend`;
         } else {
-          return `${message.messages} ${message.senderId}`;
+          return `${message.messages} -me`;
         }
       }
 

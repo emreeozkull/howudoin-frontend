@@ -12,12 +12,14 @@ export default function MainPage() {
     
     console.log("in mainPage main function: " + authJWT);
     return (
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{fontSize: 20,textAlign: 'center'}}></Text>
             <Link href="./friends">friends</Link>
-            <Link href={{pathname: "./groups" }}>groups</Link> 
             <Link href={{pathname: "./addNewFriend" }}>add new friend</Link> 
             <Link href={{pathname: "./acceptFriendRequest" }}>friend requests</Link> 
+            <Text></Text>
+            <Link href={{pathname: "./createGroup" }}>create group</Link>
+            <Link href={{pathname: "./groups" }}>groups</Link>
         </View>
     );
 }
