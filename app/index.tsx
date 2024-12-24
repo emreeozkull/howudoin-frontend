@@ -44,7 +44,6 @@ export default function Index() {
     .then(response => response.text())
     .then(data => afterResponse(data))
     .catch(error => console.log(error));
-
   }
 
 

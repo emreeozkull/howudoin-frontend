@@ -1,70 +1,65 @@
-import { StyleSheet, Text, View, Pressable } from "react-native";
-import { useAuth } from "./authContext";
-import React, { useEffect, useState } from "react";
-import { Link } from "expo-router";
+// Friends.tsx
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image } from 'react-native';
+import { Link } from 'expo-router';
+import { styles } from '@/styles/styles'; // <-- Adjust the path as needed
+import { useAuth } from './authContext';
 
-
-
-
-export default function Friends() {
-
-    const [friends, setFriends] = useState([]);
-    const { authJWT } = useAuth();
-
-
-    const requestOptions = {
-        method: "POST",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer '+ authJWT
-        }
-    
-      }
-
-    useEffect(() => {
-        fetch("http://localhost:8080/friends", requestOptions)
-        .then(response => response.json())
-        .then(data => setFriends(data.friendList))
-        .catch(error => console.log(error));
-    }, []);
-    
-    return (
-        <View style={myStyle.container}>
-            <Text style={{fontSize: 15,padding: 10}}> id - username - select friend to chat </Text>
-            {
-                
-                friends.map((friend, index) => {
-                    return(
-                        <View key={index} style={{flexDirection: 'row'}}>
-
-                            <Text style={{fontSize: 15,textAlign: 'center'}}> {friend.id} -  {friend.username}  - {friend.groups} </Text>
-                            <Link href={{pathname:"./chatFriend",params:{frid:friend.id}}}>Chat with friend</Link>
-                        </View>
-                    
-                )
-                })
-                  
-            }
-        </View>
-    );
+interface FriendType {
+  id: number;
+  username: string;
+  groups: string;
+  avatarUrl?: string; // Example if your friend object has an avatar URL
 }
 
+export default function Friends() {
+  const [friends, setFriends] = useState<FriendType[]>([]);
+  const { authJWT } = useAuth();
 
-const myStyle = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-});
+  useEffect(() => {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + authJWT,
+      },
+    };
 
+    fetch('http://localhost:8080/friends', requestOptions)
+      .then((response) => response.json())
+      .then((data) => setFriends(data.friendList))
+      .catch((error) => console.log(error));
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Your Friends</Text>
+      {friends.map((friend) => (
+        <View key={friend.id} style={styles.listItem}>
+          {/* Example if there's an avatar URL */}
+          {friend.avatarUrl && (
+            <Image
+              source={{ uri: friend.avatarUrl }}
+              style={styles.profileImage}
+            />
+          )}
+          <Text style={styles.listItemText}>
+            {friend.username} 
+          </Text>
+          <Link
+            href={{
+              pathname: './chatFriend',
+              params: { frid: friend.id },
+            }}
+          >
+            {/* You could style this <Text> or use a custom Link style */}
+            <Text style={[styles.subTitle, { color: '#4F46E5' }]}>
+              Chat
+            </Text>
+          </Link>
+        </View>
+      ))}
+    </View>
+  );
+}

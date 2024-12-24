@@ -1,6 +1,7 @@
 // _layout.tsx
 import { Stack } from "expo-router";
 import { AuthProvider } from "./authContext"; //
+import { FontAwesome } from "@expo/vector-icons";
 
 export default function RootLayout() {
   return (
@@ -17,7 +18,7 @@ export default function RootLayout() {
         <Stack.Screen name="groups" options={{ title: "Groups" }} />
         <Stack.Screen name="groupDetail" options={{ title: "GroupDetail" }} />
         <Stack.Screen name="groupMessaging" options={{ title: "GroupMessaging" }} />
-      
+        
       </Stack>
     </AuthProvider>
   );

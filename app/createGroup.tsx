@@ -1,125 +1,90 @@
-import { StyleSheet, Text, View, Pressable, TextInput, Button } from "react-native";
-import { useAuth } from "./authContext";
-import React, { useEffect, useState } from "react";
-import { Link } from "expo-router";
+// createGroup.tsx
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, Pressable, Button } from 'react-native';
+import { Link } from 'expo-router';
+import { useAuth } from './authContext';
+import { styles } from '@/styles/styles'; // <-- import your shared styles
 
+export default function CreateGroup() {
+  const [userNames, setUserNames] = useState<string[]>([]);
+  const [groupName, setGroupName] = useState('');
+  const { authJWT } = useAuth();
+  const [friends, setFriends] = useState<any[]>([]);
 
+  // Fetch friend list
+  useEffect(() => {
+    fetch('http://localhost:8080/friends', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + authJWT,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => setFriends(data.friendList))
+      .catch((error) => console.log(error));
+  }, [authJWT]);
 
+  // Create group request options
+  const requestOptions = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + authJWT,
+    },
+    body: JSON.stringify({
+      GroupName: groupName,
+      userNames: userNames,
+    }),
+  };
 
-export default function createGroup() {
+  function pressablePressed() {
+    console.log('usernames in create:', userNames);
+    fetch('http://localhost:8080/groups/create', requestOptions)
+      .then((response) => response.text())
+      .then((data) => console.log('groups create pressable: ', data))
+      .catch((error) => console.log(error));
+  }
 
-    const [userNames, setUserNames] = useState([]);
-    const [groupName, setGroupName] = useState("");
-    const { authJWT } = useAuth();
+  function pressableSetUserNames(friendUsername: string) {
+    console.log('pressed: ' + friendUsername);
+    setUserNames((prev) => [...prev, friendUsername]);
+  }
 
-
-
-    const [friends, setFriends] = useState([]);
-
-    useEffect(() => {
-        fetch("http://localhost:8080/friends", {
-          method: "POST",
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer '+ authJWT
-          }
+  return (
+    <View style={styles.container}>
+      {/* Title */}
+      <Text style={styles.title}>Create Group</Text>
       
-        })
-        .then(response => response.json())
-        .then(data => setFriends(data.friendList))
-        .catch(error => console.log(error));
-    }, []);
+      {/* Group Name Input */}
+      <Text style={styles.subTitle}>Group Name:</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter a group name"
+        onChangeText={setGroupName}
+        value={groupName}
+      />
 
+      {/* Select Users */}
+      <Text style={styles.subTitle}>Select Users:</Text>
+      {friends.map((friend, index) => (
+        <Pressable
+          key={index}
+          style={styles.friendPressable}
+          onPress={() => pressableSetUserNames(friend.username)}
+        >
+          <Text style={styles.listItemText}>{friend.username}</Text>
+        </Pressable>
+      ))}
 
-    const requestOptions = {
-    
-
-        method: "POST",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer '+ authJWT
-        },
-        body: JSON.stringify({
-            GroupName: groupName,
-            userNames: userNames
-        })
-    
-    }
-    
-    function pressablePressed(){
-        console.log("usernames in create:", userNames)
-        fetch("http://localhost:8080/groups/create", requestOptions)
-        .then(response => response.text())
-        .then(data => console.log("groups create pressable: ",data))
-        .catch(error => console.log(error));
-    }
-
-    function pressableSetUserNames(friendUsername:string){
-        console.log("pressed: "+ friendUsername);
-      setUserNames(userNames.concat([friendUsername]));
-    }
-
-    return (
-        <View style={myStyle.container}>
-
-            <View > 
-                <Text> group name: </Text>
-                <TextInput style={myStyle.roundedStyle} onChangeText={setGroupName}></TextInput>
-    
-                <Text>select user names: </Text>
-
-                  {
-                      
-                      friends.map((friend, index) => {
-                          return(
-                              <View key={index} style={{flexDirection: 'row'}}>
-            
-                              <Pressable style={myStyle.roundedStyle} onPress={() => pressableSetUserNames(friend.username)} >
-                                    <Text style={{fontSize: 15,textAlign: 'center'}}> {friend.username} </Text>
-                               </Pressable>
-
-
-                              </View>
-                          )
-                      })
-                  }
-
-    
-                <View  style={myStyle.roundedStyle}>
-                <Button title="create group" onPress={pressablePressed} ></Button>
-                </View>
-    
-            </View>
-                  
-            
-        </View>
-    );
+      {/* Create Group Button */}
+      <View style={{ marginTop: 20 }}>
+        <Pressable style={styles.sendButton} onPress={pressablePressed}>
+          <Text style={styles.sendButtonText}>Create Group</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
 }
-
-
-const myStyle = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-  roundedStyle : {
-    backgroundColor: "#e5e5e5",
-    padding: 10,
-    margin: 5,
-    borderRadius: 40,
-    width: 250,
-  },
-});
-
