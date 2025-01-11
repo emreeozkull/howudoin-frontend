@@ -24,7 +24,7 @@ export default function Groups() {
       },
     };
 
-    fetch('http://localhost:8080/groups', requestOptions)
+    fetch('https://howudoin.biletbudur.tr/groups', requestOptions)
       .then((response) => response.json())
       .then((data) => setGroups(data))
       .catch((error) => console.log(error));

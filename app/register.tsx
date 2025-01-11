@@ -1,4 +1,3 @@
-
 import { View, Text, TextInput, Alert } from "react-native";
 import { StyleSheet } from "react-native";
 import {useState} from 'react';
@@ -12,7 +11,7 @@ export default function register(){
 
 
     function pressablePressed(){
-        fetch("http://localhost:8080/register", {
+        fetch("https://howudoin.biletbudur.tr/register", {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
@@ -23,12 +22,21 @@ export default function register(){
                 password: password
             })
         })
-        .then(response => response.text())
-        .then(data =>  afterResponse(data))
-        .catch(error => console.log(error));
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(data => afterResponse(data))
+        .catch(error => {
+            console.error("Error:", error);
+            Alert.alert("Connection Error", "Unable to connect to the server. Please try again later.");
+        });
     }
 
     function afterResponse(data:string){
+      console.log(data);
       if (data == "user registered"){
         Alert.alert("user registered");
         router.back();

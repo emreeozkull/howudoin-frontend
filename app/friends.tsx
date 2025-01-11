@@ -26,7 +26,7 @@ export default function Friends() {
       },
     };
 
-    fetch('http://localhost:8080/friends', requestOptions)
+    fetch('https://howudoin.biletbudur.tr/friends', requestOptions)
       .then((response) => response.json())
       .then((data) => setFriends(data.friendList))
       .catch((error) => console.log(error));

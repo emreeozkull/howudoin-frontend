@@ -13,7 +13,7 @@ export default function AddNewFriend() {
     function pressablePressed(){
       console.log("pressed: "+ friendUsername);
       
-        fetch("http://localhost:8080/friends/add", {
+        fetch("https://howudoin.biletbudur.tr/friends/add", {
           method: "POST",
           headers: {
               'Accept': 'application/json',

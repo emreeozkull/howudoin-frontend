@@ -19,7 +19,7 @@ export default function GroupDetail() {
   const { authJWT } = useAuth();
 
   useEffect(() => {
-    fetch(`http://localhost:8080/groups/${groupId}/getGroupDetails`, {
+    fetch(`https://howudoin.biletbudur.tr/groups/${groupId}/getGroupDetails`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',

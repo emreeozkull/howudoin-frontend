@@ -14,7 +14,7 @@ export default function AcceptFriendRequest() {
   }, []);
 
   function getFriendRequests() {
-    fetch('http://localhost:8080/friends/getFriendRequests', {
+    fetch('https://howudoin.biletbudur.tr/friends/getFriendRequests', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -31,7 +31,7 @@ export default function AcceptFriendRequest() {
     console.log('pressed:', friendUser);
     setFriendUsername(friendUser);
 
-    fetch('http://localhost:8080/friends/accept', {
+    fetch('https://howudoin.biletbudur.tr/friends/accept', {
       method: 'POST',
       headers: {
         Accept: 'application/json',

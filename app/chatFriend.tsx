@@ -19,7 +19,7 @@ export default function ChatFriend() {
   const [sendingMessage, setSendingMessage] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:8080/messages', {
+    fetch('https://howudoin.biletbudur.tr/messages', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -37,7 +37,7 @@ export default function ChatFriend() {
 
   const pressablePressed = () => {
     console.log('Sending message:', sendingMessage);
-    fetch('http://localhost:8080/messages/send', {
+    fetch('https://howudoin.biletbudur.tr/messages/send', {
       method: 'POST',
       headers: {
         Accept: 'application/json',

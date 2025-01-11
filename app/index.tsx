@@ -40,7 +40,7 @@ export default function Index() {
   function pressablePressed(){
     console.log("pressable pressed");
     console.log(username, password);
-    fetch("http://localhost:8080/login", requestOptions)
+    fetch("https://howudoin.biletbudur.tr/login", requestOptions)
     .then(response => response.text())
     .then(data => afterResponse(data))
     .catch(error => console.log(error));

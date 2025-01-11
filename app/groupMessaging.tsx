@@ -19,7 +19,7 @@ export default function GroupMessaging() {
   const [sendMessage, setSendMessage] = useState('');
 
   useEffect(() => {
-    fetch(`http://localhost:8080/groups/${groupId}/messages`, {
+    fetch(`https://howudoin.biletbudur.tr/groups/${groupId}/messages`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ export default function GroupMessaging() {
 
   function sendMessageToServer() {
     console.log('Sending message: ', sendMessage);
-    fetch(`http://localhost:8080/groups/${groupId}/send`, {
+    fetch(`https://howudoin.biletbudur.tr/groups/${groupId}/send`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

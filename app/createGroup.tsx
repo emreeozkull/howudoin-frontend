@@ -13,7 +13,7 @@ export default function CreateGroup() {
 
   // Fetch friend list
   useEffect(() => {
-    fetch('http://localhost:8080/friends', {
+    fetch('https://howudoin.biletbudur.tr/friends', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -42,7 +42,7 @@ export default function CreateGroup() {
 
   function pressablePressed() {
     console.log('usernames in create:', userNames);
-    fetch('http://localhost:8080/groups/create', requestOptions)
+    fetch('https://howudoin.biletbudur.tr/groups/create', requestOptions)
       .then((response) => response.text())
       .then((data) => console.log('groups create pressable: ', data))
       .catch((error) => console.log(error));
